@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <title>Simplist</title>
+    <link href="css/style.css" media="all" rel="stylesheet" type="text/css"/>
+    <script src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js "></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.1/underscore-min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.0/backbone-min.js"></script>
+    <script src="js/backbone-localstorage.js"></script>
+    <script src="js/simplist.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Todo App Interface -->
+
+    <div id="simplistapp">
+
+      <div id="simplist-title">
+        <h1 class="simplist-title-h1"></h1>
+        <input class="simplist-title-input" type="text" value="" />
+      </div>
+
+      <div id="percentage_bar">
+          <span class="percentage-span"></span>
+      </div>
+
+      <div class="content">
+
+        <div id="create-simplist">
+          <input id="new-simplist" placeholder="simplist something down..." type="text" />
+          <span class="ui-tooltip-top" style="display:none;">Press Enter to save this item</span>
+        </div>
+
+        <div id="simplists">
+          <ol id="simplist-list"></ol>
+        </div>
+
+        <div id="simplist-stats"></div>
+
+      </div>
+
+    </div>
+
+    <ul id="instructions">
+      <li>Double-click to edit an item.</li>
+    </ul>
+
+    <!-- Templates -->
+
+    <script type="text/template" id="item-template">
+      <div class="simplist <%= done ? 'done' : '' %>">
+        <div class="display">
+          <input class="check" type="checkbox" <%= done ? 'checked="checked"' : '' %> />
+          <div class="simplist-text"></div>
+          <span class="simplist-destroy"></span>
+        </div>
+        <div class="edit">
+          <input class="simplist-input" type="text" value="" />
+        </div>
+      </div>
+    </script>
+
+  </body>
+
+</html>
