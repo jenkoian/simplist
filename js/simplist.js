@@ -76,7 +76,10 @@ $(function() {
             'click .check': 'toggleDone',
             'dblclick div.simplist-text': 'edit',
             'click span.simplist-destroy': 'clear',
-            'keypress .simplist-input': 'updateOnEnter'
+            'keypress .simplist-input': 'updateOnEnter',
+            'click div.simplist-edit-description a': 'editDescription',
+            'keypress .simplist-description-input': 'updateDescriptionOnEnter',
+            'dblclick div.simplist-description': 'editDescription'
         },
         
         initialize: function() {
@@ -87,6 +90,7 @@ $(function() {
         render: function() {
             $(this.el).html(this.template(this.model.toJSON()));
             this.setText();
+            this.setDescription();
             return this;
         },
         
@@ -97,6 +101,16 @@ $(function() {
             this.input.bind('blur', _.bind(this.close, this)).val(text);
         },
         
+        setDescription: function() {
+            var desc = this.model.get('description');
+            if (desc && desc.length) {                
+                this.$('.simplist-description span').text(desc);
+                this.$('.simplist-description a').remove();
+            }
+            this.inputDescription = this.$('.simplist-description-input');
+            this.inputDescription.bind('blur', _.bind(this.closeDescriptionInput, this)).val(desc);            
+        },
+        
         toggleDone: function() {
             this.model.toggle();
         },
@@ -104,6 +118,27 @@ $(function() {
         edit: function() {
             $(this.el).addClass('editing');
             this.input.focus();
+        },
+        
+        editDescription: function(e) {
+            this.$('.simplist-description span').hide();
+            this.$('.simplist-edit-description').addClass('editing');      
+            e.preventDefault();
+        },
+        
+        updateDescriptionOnEnter: function(e) {
+            if (e.keyCode == 13) {
+                this.closeDescriptionInput();
+            }
+        },
+        
+        closeDescriptionInput: function() {
+            if (this.inputDescription.val() && this.inputDescription.val().length) {
+                this.model.save({description: this.inputDescription.val()});
+                this.$('.simplist-description span').show();
+                this.$('.simplist-description a').remove();
+                this.$('.simplist-edit-description').removeClass('editing');
+            }
         },
         
         close: function() {
@@ -191,13 +226,13 @@ $(function() {
         setPercentage: function() {            
             if (Simplists.length > 0) {
                 var percentage = (Simplists.done().length / Simplists.length) * 100;                
-                this.percentageModel.save({width: percentage});
-                this.$('.percentage-span').width(percentage + '%');
+                this.$('.percentage-span').animate({width: percentage+'%'},1200);
+                this.percentageModel.save({width: percentage});                
             } else {
-                this.percentageModel.save({width: 0});
-                this.$('.percentage-span').width('0%');            
+                this.$('.percentage-span').animate({width: '0%'},1200);
+                this.percentageModel.save({width: 0});                
             }
-        },
+        },  
         
         closeTitle: function() {
             var text = this.$('.simplist-title-input').val();
