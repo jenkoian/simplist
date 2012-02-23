@@ -3,7 +3,7 @@ $(function() {
     window.Title = Backbone.Model.extend({
         defaults: function() {
             return {
-                title: 'My Simplist'
+                title: 'My Awesome List of Stuff (double click me to edit)'
             };
         },
         
@@ -142,8 +142,10 @@ $(function() {
         },
         
         close: function() {
-            this.model.save({text: this.input.val()});
-            $(this.el).removeClass('editing');
+            if (this.input.val() && this.input.val().length) {
+                this.model.save({text: this.input.val()});
+                $(this.el).removeClass('editing');
+            }
         },
         
         updateOnEnter: function(e) {
@@ -163,6 +165,10 @@ $(function() {
     });
     
     window.AppView = Backbone.View.extend({
+    
+        phrases: ['Wrestle a panda bear', 'Tickle a monkey', 'Steal a car', 'Throw a TV out of a hotel window',
+                    'Set fire to a toaster', 'Do the funky chicken', 'Lick a toad',
+                    'Grow a moustache'],
         
         el: $('#simplistapp'),
                 
@@ -171,7 +177,7 @@ $(function() {
             'keypress #simplist-title': 'createTitleOnEnter',
             'keypress #new-simplist': 'createSimplistOnEnter',
             'keyup #new-simplist': 'showTooltip',
-            'click .simplist-clear a': 'clearCompleted'            
+            'click .simplist-clear a': 'clearCompleted'
         },
         
         initialize: function() {
@@ -182,13 +188,13 @@ $(function() {
             this.titleModel = new Title({id: 1});
             this.titleModel.fetch();
             
-            console.log(this.titleModel);
-            
             this.percentageModel = new Percentage({id: 1});
             this.percentageModel.fetch();
             
             this.$('.simplist-title-h1').text(this.titleModel.get('title'));
             this.$('.percentage-span').width(this.percentageModel.get('width') + '%');
+            
+            this.input.attr('placeholder', this.getRandomListItem());
             
             Simplists.bind('add', this.addOne, this);
             Simplists.bind('reset', this.addAll, this);
@@ -196,6 +202,11 @@ $(function() {
             Simplists.bind('destroy', this.setPercentage, this);  
             
             Simplists.fetch();
+        },
+        
+        getRandomListItem: function() {
+            var randomNumber=Math.floor(Math.random()*this.phrases.length)
+            return this.phrases[randomNumber];
         },
         
         render: function() {            
@@ -219,8 +230,10 @@ $(function() {
         
         setTitleText: function() {
             var text = this.titleModel.get('title');
-            this.$('.simplist-title-input').val(text);
-            this.$('.simplist-title-input').bind('blur', _.bind(this.closeTitle, this)).val(text);
+            if (text.length) {
+                this.$('.simplist-title-input').val(text);
+                this.$('.simplist-title-input').bind('blur', _.bind(this.closeTitle, this)).val(text);
+            }
         },  
         
         setPercentage: function() {            
@@ -238,7 +251,7 @@ $(function() {
             var text = this.$('.simplist-title-input').val();
             this.titleModel.save({title: text});
             this.$('.simplist-title-h1').text(text);
-            $(this.title).removeClass('editing');
+            $(this.title).removeClass('editing');            
         },                
         
         createTitleOnEnter: function(e) {
@@ -257,6 +270,7 @@ $(function() {
             
             Simplists.create({text: text});
             this.input.val('');
+            this.input.attr('placeholder', this.getRandomListItem());
         },
         
         clearCompleted: function() {
@@ -282,7 +296,7 @@ $(function() {
             };
             
             this.tooltipTimeout = _.delay(show, 1000);
-        }
+        }      
     });
     
     window.App = new AppView;
