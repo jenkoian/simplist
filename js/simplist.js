@@ -239,10 +239,10 @@ $(function() {
         setPercentage: function() {            
             if (Simplists.length > 0) {
                 var percentage = (Simplists.done().length / Simplists.length) * 100;                
-                this.$('.percentage-span').animate({width: percentage+'%'},1200);
+                this.$('.percentage-span').animate({width: percentage+'%'},500);
                 this.percentageModel.save({width: percentage});                
             } else {
-                this.$('.percentage-span').animate({width: '0%'},1200);
+                this.$('.percentage-span').animate({width: '0%'},500);
                 this.percentageModel.save({width: 0});                
             }
         },  
